@@ -1,0 +1,28 @@
+name: single_router_lab
+
+topology:
+  nodes:
+    csr-r1:
+      kind: vr-csr
+      image: vrnetlab/vr-csr:16.09.05
+      config:
+        interfaces:
+          - name: eth0
+            type: ethernet
+            ip: 192.168.1.1/24
+          - name: eth1
+            type: ethernet
+            ip: 192.168.2.1/24
+
+  links:
+    - endpoints:
+      - node: csr-r1
+        interface: eth0
+      - node: network1
+        interface: eth0
+    - endpoints:
+      - node: csr-r1
+        interface: eth1
+      - node: network2
+        interface: eth0
+
