@@ -1,0 +1,37 @@
+terraform {
+  required_providers {
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "~> 3.0.1"
+    }
+  }
+}
+
+provider "docker" {}
+
+module "network" {
+  source = "../network"
+}
+
+resource "docker_image" "apache" {
+  name         = "httpd:latest"  # Using the official Apache HTTP Server image
+  keep_locally = false
+}
+
+resource "docker_container" "apache_server" {
+  image = docker_image.apache.image_id
+  name  = "apache_server"
+
+  networks_advanced {
+    name    = module.network.network_name_2
+    aliases = ["apache"]
+  }
+
+  ports {
+    internal = 80
+    external = 8080  # Mapping internal port 80 to external port 8080
+  }
+
+  must_run          = true
+  publish_all_ports = true
+}
